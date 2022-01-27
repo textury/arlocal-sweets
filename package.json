@@ -21,6 +21,7 @@
     "npm": ">=7.6.0"
   },
   "dependencies": {
+    "blockweave": "^1.0.17",
     "util": "^0.12.4"
   },
   "devDependencies": {
