@@ -9,7 +9,7 @@ export let arlocal: Arlocal;
 let fn: any;
 
 jest.setTimeout(30000);
-beforeAll(async () => {
+beforeEach(async () => {
   // start arlocal
   port = Math.floor(Math.random() * (9000 - 5000 + 1) + 5000);
   arlocal = new Arlocal(port, true);
@@ -29,7 +29,7 @@ beforeAll(async () => {
   fn = jest.spyOn(console, 'error').mockImplementation(() => null);
 });
 
-afterAll(async () => {
+afterEach(async () => {
   // stop arlocal
   await arlocal.stop();
 
