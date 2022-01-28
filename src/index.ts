@@ -11,9 +11,6 @@ export default class ArlocalSweets {
   constructor(blockweave: Blockweave, wallet: JWKInterface) {
     this._blockweave = blockweave;
     this._wallet = wallet;
-
-    // Validate blockweave
-    this._validateNetwork();
     // Support chaining of methods
     return this;
   }
@@ -26,11 +23,27 @@ export default class ArlocalSweets {
   }
 
   /**
+   * 
+   * @returns True if network is valid, and vice versa
+   */
+  public async isTestNetwork() {
+    try {
+      await this._validateNetwork() ;
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    *
    * @param amount Amount in winston
    * @returns Amount funded in winston
    */
   public async fundWallet(amount: number): Promise<number> {
+    // Validate blockweave
+    await this._validateNetwork();
     const address = await this._blockweave.wallets.jwkToAddress(this._wallet);
     const { data } = await this._blockweave.api.get(
       `/mint/${address}/${amount}`
@@ -44,6 +57,8 @@ export default class ArlocalSweets {
    * @returns Amount of blocks mined
    */
   public async mine(blocks?: number): Promise<number> {
+    // Validate blockweave
+    await this._validateNetwork();
     blocks = blocks || 1;
     await this._blockweave.api.get(`/mine/${blocks}`);
 
@@ -56,6 +71,8 @@ export default class ArlocalSweets {
    * @returns Arlocal transaction id
    */
   public async copyTransaction(txid: string): Promise<string> {
+    // Validate blockweave
+    await this._validateNetwork();
     let data = "";
     const { data: resp } = await this._mainnet.api.get(`/tx/${txid}/status`);
     if (typeof resp === "string") {
