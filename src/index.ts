@@ -23,12 +23,12 @@ export default class ArlocalSweets {
   }
 
   /**
-   * 
+   *
    * @returns True if network is valid, and vice versa
    */
   public async isTestNetwork() {
     try {
-      await this._validateNetwork() ;
+      await this._validateNetwork();
     } catch (e) {
       return false;
     }
