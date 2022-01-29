@@ -40,6 +40,11 @@ export const cloneTx = async (
     owner: wallet.n,
   });
 
+  if (blockweave instanceof Arweave) {
+    await blockweave.transactions.post(ntx);
+    return ntx.id;
+  }
+
   const uploader = await blockweave.transactions.getUploader(ntx as any);
 
   while (!uploader.isComplete) {
