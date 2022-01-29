@@ -1,10 +1,13 @@
 import Arlocal from 'arlocal';
 import Blockweave from 'blockweave';
+import Arweave from 'arweave';
 import { JWKInterface } from "blockweave/dist/faces/lib/wallet";
 
 export let port: number;
 export let wallet: JWKInterface;
+export let arWallet: JWKInterface;
 export let blockweave: Blockweave;
+export let arweave: Arweave;
 export let arlocal: Arlocal;
 let fn: any;
 
@@ -23,8 +26,19 @@ beforeEach(async () => {
     logging: true,
   });
 
+  arweave = new Arweave({
+    host: 'localhost',
+    port,
+    protocol: 'http',
+    timeout: 20000,
+    logging: true,
+  });
+
   // generate wallet
   wallet = await blockweave.wallets.generate();
+
+  // generate ar wallet
+  arWallet = await arweave.wallets.generate();
 
   fn = jest.spyOn(console, 'error').mockImplementation(() => null);
 });
@@ -36,6 +50,7 @@ afterEach(async () => {
   port = null;
   arlocal = null;
   blockweave = null;
+  arweave = null;
   wallet = null;
 
   fn.mockRestore();

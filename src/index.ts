@@ -1,15 +1,15 @@
 import Blockweave from "blockweave";
+import Arweave from "arweave";
 import { JWKInterface } from "blockweave/dist/faces/lib/wallet";
-import { Tag } from "blockweave/dist/lib/tag";
 import Transaction from "blockweave/dist/lib/transaction";
 import { cloneTx, copyTx } from "./utils/transaction";
 
 export default class ArlocalSweets {
-  public _blockweave: Blockweave;
+  public _blockweave: Blockweave | Arweave;
   private _wallet: JWKInterface;
   private _mainnet: Blockweave = new Blockweave();
 
-  constructor(blockweave: Blockweave, wallet: JWKInterface) {
+  constructor(blockweave: Blockweave | Arweave, wallet: JWKInterface) {
     this._blockweave = blockweave;
     this._wallet = wallet;
     // Support chaining of methods

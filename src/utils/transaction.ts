@@ -1,16 +1,18 @@
 import Transaction from "blockweave/dist/lib/transaction";
 import Blockweave from "blockweave";
+import Arweave from "arweave";
+import ArTransaction from "arweave/node/lib/transaction";
 import { JWKInterface } from "blockweave/dist/faces/lib/wallet";
 import { Tag } from "blockweave/dist/lib/tag";
 
 export const cloneTx = async (
   tx: Transaction,
-  blockweave: Blockweave,
+  blockweave: Blockweave | Arweave,
   wallet: JWKInterface,
   data: string = ""
 ): Promise<string | null> => {
   const ntx = await Transaction.create(
-    blockweave,
+    blockweave as Blockweave,
     {
       format: tx.format,
       owner: tx.owner,
@@ -38,7 +40,7 @@ export const cloneTx = async (
     owner: wallet.n,
   });
 
-  const uploader = await blockweave.transactions.getUploader(ntx);
+  const uploader = await blockweave.transactions.getUploader(ntx as any);
 
   while (!uploader.isComplete) {
     try {
@@ -61,8 +63,8 @@ export const cloneTx = async (
 };
 
 export const copyTx = async (
-  tx: Transaction,
-  blockweave: Blockweave,
+  tx: Transaction | ArTransaction,
+  blockweave: Blockweave | Arweave,
   wallet: JWKInterface,
   data: string = ""
 ): Promise<string | null> => {
@@ -82,9 +84,14 @@ export const copyTx = async (
     );
   });
 
-  await blockweave.transactions.sign(localTx, wallet);
+  await blockweave.transactions.sign(
+    localTx as Transaction & ArTransaction,
+    wallet
+  );
 
-  const uploader = await blockweave.transactions.getUploader(localTx);
+  const uploader = await blockweave.transactions.getUploader(
+    localTx as Transaction & ArTransaction
+  );
 
   while (!uploader.isComplete) {
     try {
