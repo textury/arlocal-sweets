@@ -1,4 +1,4 @@
-import Sweets from '../src/index';
+import Sweets from '../src';
 import { blockweave, wallet } from '../test-setup';
 
 describe('sweets.mine()', () => {

@@ -1,5 +1,5 @@
 import Blockweave from 'blockweave';
-import Sweets from '../src/index';
+import Sweets from '../src';
 import { blockweave, wallet } from '../test-setup';
 
 describe('VALIDATE NETWORK', () => {
