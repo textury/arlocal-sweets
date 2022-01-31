@@ -96,5 +96,5 @@ await sweets.copyTransaction('CKRSJ1s8MKk5dPl5V-bEI3FTGxK9CieI-d3c7HHbvLI'); // 
 This is a method which allows you copy transaction from the mainnet and retains the mainnet transaction ID, but this is an experimental feature and may cause issues. It is more advisable to use `sweets.copyTransaction` in place of this.
 
 ```ts
-sweets.cloneTransaction('CKRSJ1s8MKk5dPl5V-bEI3FTGxK9CieI-d3c7HHbvLI'); // returns the same mainnet transaction ID
+await sweets.cloneTransaction('CKRSJ1s8MKk5dPl5V-bEI3FTGxK9CieI-d3c7HHbvLI'); // returns the same mainnet transaction ID
 ```
