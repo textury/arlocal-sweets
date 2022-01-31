@@ -92,6 +92,8 @@ export default class ArlocalSweets {
   }
 
   public async cloneTransaction(txid: string) {
+    // Validate blockweave
+    await this._validateNetwork();
     let data = "";
     const { data: resp } = await this._mainnet.api.get(`/tx/${txid}/status`);
     if (typeof resp === "string") {
