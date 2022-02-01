@@ -3,6 +3,8 @@ import Arweave from "arweave";
 import { JWKInterface } from "blockweave/dist/faces/lib/wallet";
 import Transaction from "blockweave/dist/lib/transaction";
 import { cloneTx, copyTx } from "./utils/transaction";
+import { searchForTag } from "./utils/tags";
+import { PTag } from "./faces/tags";
 
 export default class ArlocalSweets {
   public _blockweave: Blockweave | Arweave;
@@ -91,7 +93,12 @@ export default class ArlocalSweets {
     return id;
   }
 
-  public async cloneTransaction(txid: string) {
+  /**
+   *
+   * @param txid Mainnet transaction id
+   * @returns Arlocal transaction id
+   */
+  public async cloneTransaction(txid: string): Promise<string> {
     // Validate blockweave
     await this._validateNetwork();
     let data = "";
@@ -108,6 +115,63 @@ export default class ArlocalSweets {
     const id = await cloneTx(tx, this._blockweave, this._wallet, data);
 
     await this.mine();
+    return id;
+  }
+
+  /**
+   *
+   * @param txid Mainnet contract initial state transaction ID
+   * @returns Arlocal contract initial state transaction ID
+   */
+  public async copyContract(txid: string): Promise<string> {
+    // Validate blockweave
+    await this._validateNetwork();
+    let data = "";
+    // validate tx
+    const { data: resp } = await this._mainnet.api.get(`/tx/${txid}/status`);
+    if (typeof resp === "string") {
+      throw new Error(`Transaction returned status of: ${resp}`);
+    }
+
+    // get state tx meta_data
+    const tx: Transaction = await this._mainnet.transactions.get(txid);
+
+    // validate tx type
+    const value = searchForTag(tx, "App-Name");
+    if (value !== "SmartWeaveContract") {
+      throw new Error("Transaction is not a SmartWeave contract");
+    }
+
+    // get contract src
+    const src = searchForTag(tx, "Contract-Src");
+    if (!src) {
+      throw new Error("Contract-Src not found in contract state tags");
+    }
+
+    // copy the contract src
+    const nsrc = await this.copyTransaction(src);
+
+    // get the state tx data
+    try {
+      ({ data } = await this._mainnet.api.get(`/${txid}`));
+      // fix json parsing by axios
+      if (typeof data !== "string") {
+        data = JSON.stringify(data);
+      }
+    } catch (e) {}
+
+    // copy the state tx
+    const eTags: PTag[] = [
+      {
+        name: "Contract-Src",
+        value: nsrc,
+      },
+    ];
+
+    const id = await copyTx(tx, this._blockweave, this._wallet, data, eTags);
+
+    await this.mine();
+
     return id;
   }
 }

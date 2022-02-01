@@ -9,8 +9,8 @@
     - [Fund Wallet](#fund-wallet)
     - [Mine Block](#mine-block)
     - [Copy Transaction](#copy-transaction)
-    - [Clone Transaction (Experimental)](#clone-transaction)
-
+    - [Clone Transaction (Experimental)](#clone-transaction-experimental)
+    - [Copy Contract](#copy-contract)
 ## Installation
 
 ```bash
@@ -98,3 +98,10 @@ This is a method which allows you copy transaction from the mainnet and retains 
 ```ts
 await sweets.cloneTransaction('CKRSJ1s8MKk5dPl5V-bEI3FTGxK9CieI-d3c7HHbvLI'); // returns the same mainnet transaction ID
 ```
+### Copy Contract
+Here you can copy SmartWeave contracts from the mainnet to arlocal testnet.
+
+```ts
+await sweets.copyContract('usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A'); // returns the testnet SmartWeave contract initial state ID
+```
+> _NB: `sweets.copyContract` takes your mainnet SmartWeave contract initial state ID as an argument. This method would throw an error if the transaction ID passed is not a SmartWeave Contract state ID._
