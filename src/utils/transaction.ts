@@ -4,6 +4,7 @@ import Arweave from "arweave";
 import ArTransaction from "arweave/node/lib/transaction";
 import { JWKInterface } from "blockweave/dist/faces/lib/wallet";
 import { Tag } from "blockweave/dist/lib/tag";
+import { PTag } from "../faces/tags";
 
 export const cloneTx = async (
   tx: Transaction,
@@ -71,7 +72,8 @@ export const copyTx = async (
   tx: Transaction | ArTransaction,
   blockweave: Blockweave | Arweave,
   wallet: JWKInterface,
-  data: string = ""
+  data: string = "",
+  extraTags: PTag[] = []
 ): Promise<string | null> => {
   const localTx = await blockweave.createTransaction(
     {
@@ -82,12 +84,29 @@ export const copyTx = async (
 
   // map tags
   const tags: Tag[] = tx.get("tags") as string & Tag[];
-  tags.forEach((tag) => {
+  // add support for tag overwrite
+  const fTags = tags.filter((tag) => {
+    const name = tag.get("name", { decode: true, string: true });
+    const isOverwritten = extraTags.some((t) => t.name === name);
+    if (isOverwritten) {
+      return false;
+    }
+    return true;
+  });
+
+  fTags.forEach((tag) => {
     localTx.addTag(
       tag.get("name", { decode: true, string: true }),
       tag.get("value", { decode: true, string: true })
     );
   });
+
+  if (extraTags.length) {
+    // Add extra tags
+    extraTags.forEach((tag) => {
+      localTx.addTag(tag.name, tag.value);
+    });
+  }
 
   await blockweave.transactions.sign(
     localTx as Transaction & ArTransaction,
@@ -107,7 +126,7 @@ export const copyTx = async (
         msg: string;
       };
       if (msg) {
-        console.log(uploader.lastResponseError);
+        console.error(uploader.lastResponseError);
         return null;
       }
 
