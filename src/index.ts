@@ -247,6 +247,7 @@ export default class ArlocalSweets {
 
     await this._blockweave.transactions.sign(ntx as any, this._wallet);
     await this._blockweave.transactions.post(ntx);
+    await this.mine();
 
     // return manifest txid
     return ntx.id;
