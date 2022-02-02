@@ -11,6 +11,7 @@
     - [Copy Transaction](#copy-transaction)
     - [Clone Transaction (Experimental)](#clone-transaction-experimental)
     - [Copy Contract](#copy-contract)
+    - [Copy Arkb Upload Transaction](#copy-arkb-upload-transaction)
 ## Installation
 
 ```bash
@@ -105,3 +106,13 @@ Here you can copy SmartWeave contracts from the mainnet to arlocal testnet.
 await sweets.copyContract('usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A'); // returns the testnet SmartWeave contract initial state ID
 ```
 > _NB: `sweets.copyContract` takes your mainnet SmartWeave contract initial state ID as an argument. This method would throw an error if the transaction ID passed is not a SmartWeave Contract state ID._
+
+### Copy Arkb Upload Transaction
+Here you can copy a full arkb upload transaction (using the manifest ID) to arlocal testnet. It does this by re uploading all files in the manifest path and generates a new manifest. <br/>
+_This works only with folder uploads on arkb._
+
+```ts
+await sweets.copyArkbTransaction('FqcTfQHqgXhUG1CWoarkE2hN-rHRpbiCXxT_OGOSlJ8'); // returns the new manifest ID.
+```
+
+> _NB: `sweets.copyArkbTransaction` takes the manifest ID of the arkb upload. If the ID supplied is not a manifest ID an error would be thrown._

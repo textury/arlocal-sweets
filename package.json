@@ -21,6 +21,7 @@
     "npm": ">=7.6.0"
   },
   "dependencies": {
+    "@supercharge/promise-pool": "^2.1.0",
     "blockweave": "^1.0.17"
   },
   "devDependencies": {
