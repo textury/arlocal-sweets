@@ -2,9 +2,12 @@ import Blockweave from "blockweave";
 import Arweave from "arweave";
 import { JWKInterface } from "blockweave/dist/faces/lib/wallet";
 import Transaction from "blockweave/dist/lib/transaction";
+import { Tag } from "blockweave/dist/lib/tag";
+import { PromisePool } from "@supercharge/promise-pool";
 import { cloneTx, copyTx } from "./utils/transaction";
 import { searchForTag } from "./utils/tags";
 import { PTag } from "./faces/tags";
+import { atob } from "./utils/utils";
 
 export default class ArlocalSweets {
   public _blockweave: Blockweave | Arweave;
@@ -173,5 +176,79 @@ export default class ArlocalSweets {
     await this.mine();
 
     return id;
+  }
+
+  public async copyArkbTransaction(txid: string): Promise<string> {
+    // Validate blockweave
+    await this._validateNetwork();
+    // validate tx
+    const { data: resp } = await this._mainnet.api.get(`/tx/${txid}/status`);
+    if (typeof resp === "string") {
+      throw new Error(`Transaction returned status of: ${resp}`);
+    }
+
+    // get state tx meta_data
+    const tx: Transaction = await this._mainnet.transactions.get(txid);
+
+    // validate tx type
+    const value = searchForTag(tx, "Content-Type");
+    if (value !== "application/x.arweave-manifest+json") {
+      throw new Error("Transaction is not an arweave manifest");
+    }
+
+    // get mainfest
+    const { data: b64manifest } = await this._mainnet.api.get(
+      `/tx/${txid}/data`
+    );
+    // parse manifest
+    const manifest = JSON.parse(atob(b64manifest));
+
+    // get the manifest paths and deploy each paths
+    const { results, errors } = await PromisePool.for(
+      Object.keys(manifest.paths)
+    )
+      .withConcurrency(5)
+      .process(async (path) => {
+        const oldPathId = manifest.paths[path].id;
+
+        const newPathId = await this.copyTransaction(oldPathId);
+
+        return { path, id: newPathId };
+      });
+
+    // rebuild manifest
+    if (errors.length) {
+      console.error(errors);
+    }
+
+    const $paths = {};
+    results.forEach(({ path, id }) => ($paths[path] = { id }));
+
+    const $manifest = {
+      ...manifest,
+      paths: $paths,
+    };
+
+    // deploy manifest
+    const ntx = await this._blockweave.createTransaction(
+      {
+        data: JSON.stringify($manifest),
+      },
+      this._wallet
+    );
+
+    const tags: Tag[] = tx.get("tags") as string & Tag[];
+    tags.forEach((tag) => {
+      ntx.addTag(
+        tag.get("name", { decode: true, string: true }),
+        tag.get("value", { decode: true, string: true })
+      );
+    });
+
+    await this._blockweave.transactions.sign(ntx as any, this._wallet);
+    await this._blockweave.transactions.post(ntx);
+
+    // return manifest txid
+    return ntx.id;
   }
 }
