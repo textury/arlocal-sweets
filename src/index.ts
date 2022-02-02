@@ -179,7 +179,7 @@ export default class ArlocalSweets {
   }
 
   /**
-   * 
+   *
    * @param txid mainnet manifest ID
    * @returns Testnet manifest ID
    */
