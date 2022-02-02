@@ -22,13 +22,13 @@
   },
   "dependencies": {
     "@supercharge/promise-pool": "^2.1.0",
+    "arweave": "^1.10.23",
     "blockweave": "^1.0.17"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.12",
     "arlocal": "^1.1.19",
-    "arweave": "^1.10.23",
     "husky": "^7.0.4",
     "jest": "^27.4.7",
     "jest-config": "^27.4.7",
