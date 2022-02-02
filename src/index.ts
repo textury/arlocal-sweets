@@ -183,7 +183,7 @@ export default class ArlocalSweets {
    * @param txid mainnet manifest ID
    * @returns Testnet manifest ID
    */
-  public async copyArkbTransaction(txid: string): Promise<string> {
+  public async copyManifestTransaction(txid: string): Promise<string> {
     // Validate blockweave
     await this._validateNetwork();
     // validate tx

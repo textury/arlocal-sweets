@@ -3,13 +3,13 @@ import { searchForTag } from '../src/utils/tags';
 import { atob } from '../src/utils/utils';
 import { blockweave, wallet } from '../test-setup';
 
-describe('sweets.copyArkbTransaction()', () => {
+describe('sweets.copyManifestTransaction()', () => {
   it('should copy a full manifest transaction and its subpath from mainnet', async () => {
     const id = 'FqcTfQHqgXhUG1CWoarkE2hN-rHRpbiCXxT_OGOSlJ8';
     const sweets = new Sweets(blockweave, wallet);
 
     await sweets.fundWallet(1e12);
-    const manifestId = await sweets.copyArkbTransaction(id);
+    const manifestId = await sweets.copyManifestTransaction(id);
     const tx = await blockweave.transactions.get(manifestId);
 
     expect(searchForTag(tx, 'Content-Type')).toEqual('application/x.arweave-manifest+json');
@@ -32,7 +32,7 @@ describe('sweets.copyArkbTransaction()', () => {
     const sweets = new Sweets(blockweave, wallet);
 
     await sweets.fundWallet(1e12);
-    await expect(sweets.copyArkbTransaction(id)).rejects.toEqual(
+    await expect(sweets.copyManifestTransaction(id)).rejects.toEqual(
       new Error('Transaction is not an arweave manifest')
     );
   });
