@@ -8,13 +8,23 @@
   "files": [
     "dist/**/*"
   ],
+  "keywords": [
+    "arlocal",
+    "sweets",
+    "arweave",
+    "textury"
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "test": "jest --detectOpenHandles --silent",
     "lint": "tslint -p tsconfig.json",
-    "prepare": "husky install"
+    "prepare": "husky install && npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "engines": {
     "node": ">=15.11.0",
