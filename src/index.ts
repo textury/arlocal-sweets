@@ -9,7 +9,7 @@ import { searchForTag } from "./utils/tags";
 import { PTag } from "./faces/tags";
 import { atob } from "./utils/utils";
 
-export default class ArlocalSweets {
+class ArlocalSweets {
   public _blockweave: Blockweave | Arweave;
   private _wallet: JWKInterface;
   private _mainnet: Blockweave = new Blockweave();
@@ -258,3 +258,4 @@ export default class ArlocalSweets {
     return ntx.id;
   }
 }
+export = ArlocalSweets;
