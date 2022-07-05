@@ -87,6 +87,9 @@ class ArlocalSweets {
 
     try {
       ({ data } = await this._mainnet.api.get(`/${txid}`));
+      if (typeof data === "object") {
+        data = JSON.stringify(data);
+      }
     } catch (e) {}
 
     const tx: Transaction = await this._mainnet.transactions.get(txid);
@@ -112,6 +115,9 @@ class ArlocalSweets {
 
     try {
       ({ data } = await this._mainnet.api.get(`/${txid}`));
+      if (typeof data === "object") {
+        data = JSON.stringify(data);
+      }
     } catch (e) {}
 
     const tx: Transaction = await this._mainnet.transactions.get(txid);
