@@ -41,7 +41,7 @@ export const cloneTx = async (
     owner: wallet.n,
   });
 
-  if (blockweave instanceof Arweave) {
+  if (blockweave.constructor.name === "Arweave") {
     await blockweave.transactions.post(ntx);
     return ntx.id;
   }
